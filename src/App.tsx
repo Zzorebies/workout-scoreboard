@@ -1,12 +1,11 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+
+import { WorkoutInputDialog } from './components/WorkoutInputDialog';
 
 function App() {
   return (
     <>
-      <Button variant="contained" color="primary">
-        Placeholder
-      </Button>
+      <WorkoutInputDialog isOpen />
     </>
   );
 }
