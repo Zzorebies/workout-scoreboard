@@ -118,6 +118,7 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
           </MuiPickersUtilsProvider>
           {workoutOptions.map(({ name, label }) => (
             <FormControlLabel
+              key={label}
               control={
                 <Checkbox
                   color="primary"
