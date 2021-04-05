@@ -7,7 +7,10 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormControlLabel
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText
 } from '@material-ui/core';
 import {
   KeyboardDatePicker,
@@ -19,6 +22,7 @@ import { addWorkout } from '../services/workoutService';
 
 interface WorkoutInputDialogProps {
   isOpen: boolean;
+  onClose: () => void;
 }
 
 interface WorkoutCheckboxOption {
@@ -55,7 +59,8 @@ const initialWorkoutSelection = workoutOptions.reduce<CheckboxSelection>(
 );
 
 export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
-  isOpen
+  isOpen,
+  onClose
 }) => {
   const [workoutDate, setWorkoutDate] = useState<Date | null>(new Date());
 
@@ -98,14 +103,20 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
     }
   }, [selectedWorkoutTypes, workoutDate]);
 
+  const isDateInvalid = workoutDate?.toString() === 'Invalid Date';
+
+  const isWorkoutNotSelected = !Object.values(workoutSelection).some(
+    (checked) => checked
+  );
+
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onClose={onClose}>
       <DialogContent>
         <Box display="flex" flexDirection="column">
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               disableToolbar
-              format="MM/dd/yyyy"
+              format="dd/MM/yyyy"
               margin="normal"
               id="date-picker-inline"
               label="Workout Date"
@@ -116,25 +127,41 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
               }}
             />
           </MuiPickersUtilsProvider>
-          {workoutOptions.map(({ name, label }) => (
-            <FormControlLabel
-              key={label}
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={workoutSelection[name]}
-                  onChange={handleWorkoutSelection}
-                  name={name}
+          <FormControl
+            required
+            error={isWorkoutNotSelected}
+            component="fieldset"
+          >
+            <FormGroup>
+              {workoutOptions.map(({ name, label }) => (
+                <FormControlLabel
+                  key={label}
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={workoutSelection[name]}
+                      onChange={handleWorkoutSelection}
+                      name={name}
+                    />
+                  }
+                  label={label}
                 />
-              }
-              label={label}
-            />
-          ))}
+              ))}
+              <FormHelperText>Select at least 1 workout</FormHelperText>
+            </FormGroup>
+          </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained">Close</Button>
-        <Button variant="contained" color="primary" onClick={onSubmit}>
+        <Button variant="contained" onClick={onClose}>
+          Close
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onSubmit}
+          disabled={isDateInvalid || isWorkoutNotSelected}
+        >
           Submit
         </Button>
       </DialogActions>
