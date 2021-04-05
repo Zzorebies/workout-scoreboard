@@ -14,8 +14,8 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: colors.blastOffBronze
-    }
-  }
+    },
+  },
 });
 
 export const ThemeProvider: React.FC = ({ children }) => (

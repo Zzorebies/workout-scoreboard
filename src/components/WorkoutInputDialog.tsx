@@ -13,12 +13,12 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from '@material-ui/pickers';
-
 import { WorkoutTypes } from '../domain/workout';
 import { addWorkout } from '../services/workoutService';
 
 interface WorkoutInputDialogProps {
-  isOpen: boolean;
+  isDialogOpen: boolean;
+  handleClose: () => void;
 }
 
 interface WorkoutCheckboxOption {
@@ -55,7 +55,7 @@ const initialWorkoutSelection = workoutOptions.reduce<CheckboxSelection>(
 );
 
 export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
-  isOpen
+  isDialogOpen, handleClose
 }) => {
   const [workoutDate, setWorkoutDate] = useState<Date | null>(new Date());
 
@@ -82,7 +82,7 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
       await addWorkout({
         // TODO: Populate user detail from actual user after implementing authentication
         user: {
-          userId: 'Test user',
+          userId: 'Test user 1',
           groupName: 'Namaste'
         },
         workoutSession: {
@@ -92,14 +92,13 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
       });
 
       setWorkoutSelection(initialWorkoutSelection);
-
       // TODO: Remove this - only for test purpose
       window.confirm('Workout submitted');
     }
   }, [selectedWorkoutTypes, workoutDate]);
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isDialogOpen}>
       <DialogContent>
         <Box display="flex" flexDirection="column">
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -133,7 +132,7 @@ export const WorkoutInputDialog: React.FC<WorkoutInputDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained">Close</Button>
+        <Button variant="contained" onClick={handleClose}>Close</Button>
         <Button variant="contained" color="primary" onClick={onSubmit}>
           Submit
         </Button>
